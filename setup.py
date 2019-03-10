@@ -1,3 +1,5 @@
+#!/usr/bin/env python
+
 """pip/setuptools packaging
 
 Based off https://github.com/pypa/sampleproject/blob/master/setup.py
