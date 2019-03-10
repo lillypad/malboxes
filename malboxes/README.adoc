@@ -1,0 +1,213 @@
+= Malboxes
+:toc: preamble
+:toclevels: 2
+:twob: https://twitter.com/obilodeau
+:twhg: https://twitter.com/hugospns
+// github stuff
+ifdef::env-github[:status:]
+
+// Travis Build Status
+ifdef::status[]
+.*Project health*
+image:https://img.shields.io/travis/GoSecure/malboxes/master.svg[Build
+Status (Travis CI), link=https://travis-ci.org/GoSecure/malboxes]
+image:https://badges.gitter.im/malboxes_/Lobby.svg[link="https://gitter.im/malboxes_/Lobby?utm_source=badge&utm_medium=badge&utm_campaign=pr-badge&utm_content=badge"]
+endif::[]
+
+Builds malware analysis Windows virtual machines so that you don't have to.
+
+https://github.com/gosecure/malboxes
+
+
+== Requirements
+
+* Python 3.3+
+* packer: https://www.packer.io/docs/install/index.html
+* vagrant: https://www.vagrantup.com/downloads.html
+* https://www.virtualbox.org/wiki/Downloads[VirtualBox] or an vSphere / ESXi server
+
+=== Minimum specs for the build machine
+
+* At least 5 GB of RAM
+* VT-X extensions strongly recommended
+
+=== Fedora
+
+    dnf install ruby-devel gcc-c++ zlib-devel
+    vagrant plugin install winrm winrm-fs
+
+=== Debian
+
+    apt install vagrant git python3-pip
+
+
+== Installation
+
+=== Linux/Unix
+
+* Install git, vagrant and packer using your distribution's packaging tool
+  (packer is sometimes called packer-io)
+* `pip install` malboxes:
++
+    sudo pip3 install git+https://github.com/GoSecure/malboxes.git#egg=malboxes
+
+
+=== Windows
+
+NOTE: Starting with Windows 10 Hyper-V is always running below the operating
+system. Since VT-X needs to be operated exclusively by only one Hypervisor
+https://github.com/GoSecure/malboxes/issues/39[this causes VirtualBox (and
+malboxes) to fail]. To disable Hyper-V and allow
+VirtualBox to run, issue the following command in an administrative command
+prompt then reboot: `bcdedit /set hypervisorlaunchtype off`
+
+==== Using Chocolatey
+
+The following steps assume that you have https://chocolatey.org/[Chocolatey]
+installed. Otherwise, follow the <<Manually,manual installation procedure>>.
+
+* Install dependencies:
++
+    choco install python vagrant packer git virtualbox
++
+* Refresh the console
++
+    refreshenv
++
+* Install malboxes:
++
+    pip3 install setuptools
+    pip3 install -U git+https://github.com/GoSecure/malboxes.git#egg=malboxes
+
+==== Manually
+
+* Install https://www.virtualbox.org/wiki/Downloads[VirtualBox],
+  https://www.vagrantup.com/downloads.html[Vagrant] and
+  https://git-scm.com/downloads[git]
+* https://www.packer.io/downloads.html[Install Packer], drop the packer binary
+  in a folder in your user's PATH like `C:\Windows\System32\`
+* https://www.python.org/downloads/[Install Python 3] (make sure to add
+  Python to your environment variables)
+* Open a console (Windows-Key + cmd)
++
+    pip3 install setuptools
+    pip3 install -U git+https://github.com/GoSecure/malboxes.git#egg=malboxes
+
+
+== Usage
+
+=== Box creation
+
+This creates your base box that is imported in Vagrant. Afterwards you can
+re-use the same box several times per sample analysis.
+
+Run:
+
+    malboxes build <template>
+
+You can also list all supported templates with:
+
+    malboxes list
+
+This will build a Vagrant box ready for malware investigation you can now
+include it in a Vagrantfile afterwards.
+
+For example:
+
+    malboxes build win10_64_analyst
+
+<<_configuration,The configuration section>> contains further information about
+what can be configured with malboxes.
+
+
+=== Per analysis instances
+
+    malboxes spin win10_64_analyst <name>
+
+This will create a `Vagrantfile` prepared to use for malware analysis. Move it
+into a directory of your choice and issue:
+
+    vagrant up
+
+By default the local directory will be shared in the VM on the Desktop. This
+can be changed by commenting the relevant part of the `Vagrantfile`.
+
+For example:
+
+    malboxes spin win7_32_analyst 20160519.cryptolocker.xyz
+
+
+== Configuration
+
+Malboxes' configuration is located in a directory that follows usual operating
+system conventions:
+
+* Linux/Unix: `~/.config/malboxes/`
+* Mac OS X: `~/Library/Application Support/malboxes/`
+* Win 7+: `C:\Users\<username>\AppData\Local\malboxes\malboxes\`
+
+The file is named `config.js` and is copied from an example file on first run.
+link:malboxes/config-example.js[The example configuration] is documented.
+
+=== ESXi / vSphere support
+
+Malboxes uses virtualbox as a back-end by default but since version 0.3.0
+support for ESXi / vSphere has been added. Notes about the
+link:docs/esx-setup.adoc[steps required for ESXi / vSphere support are
+available]. Since everyone's setup is a little bit different do not hesitate
+to open an issue if you encounter a problem or improve our documentation via a
+pull request.
+
+=== Profiles
+
+We are exploring with the concept of _profiles_ which are stored separately
+than the configuration and can be used to create files, alter the registry or
+install additional packages. See
+link:malboxes/profile-example.js[profile-example.js] for an example
+configuration. This new capacity is experimental and subject to change as we
+experiment with it.
+
+
+== More information
+
+=== Videos
+
+Introduction video
+
+image::https://img.youtube.com/vi/oq6N3WLAoe8/0.jpg[link="https://www.youtube.com/watch?v=oq6N3WLAoe8"]
+
+=== Blog posts
+
+* Introductory blog post:
+  http://gosecure.net/2017/02/16/introducing-malboxes-a-tool-to-build-malware-analysis-virtual-machines/
+
+=== Presentations
+
+malboxes was presented at
+https://www.nsec.io/2016/01/applying-devops-principles-for-better-malware-analysis/[NorthSec
+2016] in a talk titled _Applying DevOps Principles for Better Malware Analysis_
+given by link:{twob}[Olivier Bilodeau] and link:{twhg}[Hugo Genesse]
+
+* http://gosecure.github.io/presentations/2016-05-19_northsec/malboxes.html[Slides]
+  (HTML, best)
+* http://gosecure.github.io/presentations/2016-05-19_northsec/OlivierBilodeau_HugoGenesse-Malboxes.pdf[Slides]
+  (PDF, degraded)
+* https://www.youtube.com/watch?v=rfmUcYGGrls&list=PLuUtcRxSUZUpg-z0MkDrFrwMiiFMVr1yI[Video]
+
+
+== License
+
+Code is licensed under the GPLv3+, see `LICENSE` for details. Documentation
+and presentation material is licensed under the Creative Commons
+Attribution-ShareAlike 4.0, see `docs/LICENSE` for details.
+
+
+== Credits
+
+After I had the idea for an improved malware analyst workflow based on what
+I've been using for development on Linux servers (Vagrant) I quickly Googled
+if someone was already doing something in that regard.
+
+I found the https://github.com/m-dwyer/packer-malware[packer-malware] repo on
+github by Mark Andrew Dwyer. Malboxes was boostrapped thanks to his work which
+helped me especially around the areas of `Autounattend.xml` files.

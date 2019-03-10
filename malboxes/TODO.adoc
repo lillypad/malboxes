@@ -1,0 +1,120 @@
+= TODO
+
+== Minimal malware analyst use case
+
+* vagrant: punch hole through NAT for IDA in firewall
+* vagrant no net, NAT
+* doc: vagrant update box + send on network (archiving)
+* doc: vagrant team workflow
+** vagrant box repackaging covered here: http://huestones.co.uk/node/305
+* git malware analysis template integrated with malboxes
+* Integrate virtualbox and wireshark tips: https://www.virtualbox.org/wiki/Network_tips
+
+* Watch this: http://static.sstic.org/videos2016/SSTIC_2016-06-02_P07.mp4
+
+== missing things
+
+* chocolatey package for ollydbg 2
+
+== bugs
+
+* Win10 disable malware protection, cloud and automatic submission
+* Win10 desktop virtualbox share doesn't work
+
+=== inetsim json config
+
+		"vboxmanage_post": [
+			["modifyvm", "{{.Name}}", "--nic1", "intnet"],
+			["modifyvm", "{{.Name}}", "--intnet1", "malwarelab"]
+		],
+
+== Install process
+
+* Make easily customizable in `Autounattend.xml`
+** license key
+** computer name
+** username
+** NetworkLocation: Microsoft-Windows-Shell-Setup | OOBE | NetworkLocation (Win7 at least)
+
+* Concept of pre-built profiles: Work (crimeware/APTs?) vs Home (crimeware)
+
+== Improvements to Autounattend.xml
+
+* Perform automatic updates on initial setup
+* Automatic updates configuration (disabled/enabled)
+
+Ref:
+https://github.com/joefitzgerald/packer-windows/blob/master/answer_files/7/Autounattend.xml
+
+== Improvements to VM detection
+
+Also filed https://github.com/GoSecure/malboxes/issues/23[in issue #23].
+
+* Nice overview article: https://byte-atlas.blogspot.ca/2017/02/hardening-vbox-win7x64.html
+* https://github.com/CheckPointSW/InviZzzible, new tool by checkpoint people
+* https://github.com/hfiref0x/VBoxHardenedLoader
+* https://github.com/a0rtega/pafish, vm detection tool (pass it)
+* http://www.securityweek.com/dyre-banking-trojan-counts-processor-cores-detect-sandboxes
+* http://unprotect.tdgt.org/index.php/Cheat_Sheets
+* http://vmcloak.readthedocs.io/en/latest/hwconfig.html#hwconfig-create
+* https://github.com/0x4D31/honeybits
+
+== Related projects that might be useful
+
+* https://github.com/jakobadam/packer-qemu-templates/tree/master/windows
+* http://boxstarter.org/
+
+== Cleanup
+
+* Consolidate duplicated info (arch specifics) in installconfig/windows10/
+
+== Vagrant things to try or document
+
+* config.vm.box_url
+
+=== Other things
+
+  # Create a private network, which allows host-only access to the machine
+  # using a specific IP.
+  # config.vm.network "private_network", ip: "192.168.33.10"
+
+  # Create a public network, which generally matched to bridged network.
+  # Bridged networks make the machine appear as another physical device on
+  # your network.
+  # config.vm.network "public_network"
+
+=== In the box Vagranfile
+
+To communicate with the user:
+
+    config.vm.post_up_message
+
+== Support Linux targets
+
+TODO
+
+== Support QEMU targets (other archs)
+
+To do malware analysis on embedded systems.
+
+* QEMU on Windows, https://qemu.weilnetz.de/
+
+== Support different back-ends
+
+* Libvirt/KVM: https://github.com/jakobadam/packer-qemu-templates/tree/master/windows
+
+== Support WinXP
+
+Talk to sholmes, he did it.
+
+== Optimizations
+
+* https://github.com/W4RH4WK/Debloat-Windows-10
+
+=== Use VirtualBox's linked_clones Vagrant config
+
+https://www.vagrantup.com/docs/virtualbox/configuration.html
+
+== Honeypot Workflow
+
+* https://github.com/0x4D31/honeybits
