@@ -30,8 +30,8 @@ def _prepare():
                                       path.join(here, 'malboxes')))
 
     # docs
-    shutil.copytree(path.join(here, 'docs'), path.join(here, 'malboxes/docs'),
-                    ignore=shutil.ignore_patterns('presentation'))
+    #shutil.copytree(path.join(here, 'docs'), path.join(here, 'malboxes/docs'),
+    #                ignore=shutil.ignore_patterns('presentation'))
 
 def _teardown():
     """Removing temporary files"""
@@ -39,7 +39,7 @@ def _teardown():
     for f in _tempfiles:
         remove(path.join(here, f))
 
-    shutil.rmtree(path.join(here, 'malboxes/docs'))
+    # shutil.rmtree(path.join(here, 'malboxes/docs'))
 
 # Get the long description from the README file
 # TODO process README to make it pure plaintext
